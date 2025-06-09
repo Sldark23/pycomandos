@@ -13,6 +13,7 @@ class Economia(commands.Cog):
     async def atm(self, ctx):
         user_id = str(ctx.author.id)
 
+        # Verifica se o arquivo database.json existe
         if not os.path.exists("database.json"):
             with open("database.json", "w") as f:
                 json.dump({}, f)
@@ -32,6 +33,7 @@ class Economia(commands.Cog):
 
         await ctx.send(embed=embed)
 
+        # Salvar novamente após possível criação de conta
         with open("database.json", "w") as f:
             json.dump(db, f, indent=4)
 
