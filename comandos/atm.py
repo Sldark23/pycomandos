@@ -1,34 +1,39 @@
+# comandos/atm.py
+
 import discord
 from discord.ext import commands
 import json
+import os
 
 class Economia(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.db_path = "database.json"
-
-    def get_user_data(self, user_id):
-        with open(self.db_path, "r") as f:
-            data = json.load(f)
-        user_id = str(user_id)
-        if user_id not in data:
-            data[user_id] = {"carteira": 0, "banco": 0}
-            with open(self.db_path, "w") as f:
-                json.dump(data, f, indent=4)
-        return data[user_id]
 
     @commands.command(name="atm")
     async def atm(self, ctx):
-        user = ctx.author
-        data = self.get_user_data(user.id)
+        user_id = str(ctx.author.id)
 
-        embed = discord.Embed(title="🏦 ATM", color=discord.Color.blue())
-        embed.set_author(name=user.name, icon_url=user.display_avatar.url)
-        embed.add_field(name="💵 Carteira", value=f"R$ {data['carteira']:,}", inline=True)
-        embed.add_field(name="🏦 Banco", value=f"R$ {data['banco']:,}", inline=True)
-        embed.set_footer(text="Sistema de Economia - Lioran Bot")
+        if not os.path.exists("database.json"):
+            with open("database.json", "w") as f:
+                json.dump({}, f)
+
+        with open("database.json", "r") as f:
+            db = json.load(f)
+
+        if user_id not in db:
+            db[user_id] = {"wallet": 0, "bank": 0}
+
+        wallet = db[user_id].get("wallet", 0)
+        bank = db[user_id].get("bank", 0)
+
+        embed = discord.Embed(title=f"💳 Carteira de {ctx.author.name}", color=discord.Color.green())
+        embed.add_field(name="💵 Dinheiro na Mão", value=f"R${wallet}", inline=False)
+        embed.add_field(name="🏦 Banco", value=f"R${bank}", inline=False)
 
         await ctx.send(embed=embed)
+
+        with open("database.json", "w") as f:
+            json.dump(db, f, indent=4)
 
 async def setup(bot):
     await bot.add_cog(Economia(bot))
