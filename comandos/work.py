@@ -27,13 +27,14 @@ class Trabalhar(commands.Cog):
 
         # Verifica se o usuário tem emprego
         if user_id not in dados or "emprego" not in dados[user_id]:
-            return await ctx.send("❌ Você não tem um emprego ainda. Use `prefix!jobs` para arrumar um.")
+            prefixo = await self.get_prefix(ctx)
+            return await ctx.send(f"❌ Você não tem um emprego ainda. Use `{prefixo}jobs` para arrumar um.")
 
         emprego = dados[user_id]["emprego"]
         empregos_disponiveis = dados.get("empregos", {})
 
         if emprego not in empregos_disponiveis:
-            return await ctx.send("❌ O seu emprego não existe mais. Escolha outro com `prefix!jobs`.")
+            return await ctx.send("❌ O seu emprego não existe mais. Escolha outro com `jobs`.")
 
         salario = empregos_disponiveis[emprego]["salario"]
         cooldown = empregos_disponiveis[emprego]["cooldown"]
@@ -59,6 +60,17 @@ class Trabalhar(commands.Cog):
             f"💼 Você trabalhou como **{emprego}** e recebeu **{salario} LC$**!\n"
             f"💰 Saldo atual: **{saldo} LC$**"
         )
+
+    async def get_prefix(self, ctx):
+        # Método para tentar pegar o prefixo atual do servidor
+        try:
+            with open("database.json", "r") as f:
+                db = json.load(f)
+            prefix = db.get(str(ctx.guild.id), {}).get("prefix", "!")
+        except:
+            prefix = "li!"
+        return prefix
+
+
 async def setup(bot):
     await bot.add_cog(Trabalhar(bot))
-
