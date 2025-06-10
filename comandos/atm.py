@@ -28,8 +28,8 @@ class Economia(commands.Cog):
         bank = db[user_id].get("bank", 0)
 
         embed = discord.Embed(title=f"💳 Carteira de {ctx.author.name}", color=discord.Color.green())
-        embed.add_field(name="💵 Dinheiro na Mão", value=f"R${wallet}", inline=False)
-        embed.add_field(name="🏦 Banco", value=f"R${bank}", inline=False)
+        embed.add_field(name="💵 Dinheiro na Mão", value=f"LC${wallet}", inline=False)
+        embed.add_field(name="🏦 Banco", value=f"LC${bank}", inline=False)
 
         await ctx.send(embed=embed)
 
