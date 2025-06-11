@@ -13,40 +13,40 @@ class Daily(commands.Cog):
         criar_usuario(user_id)
         dados = obter_dados_usuario(user_id)
 
-        # Recupera o timestamp e o streak atual (dias consecutivos)
         ultimo_daily = dados.get("ultimo_daily", 0)
-        streak = dados.get("streak", 0)
-
+        combo = dados.get("combo_daily", 1)
         agora = int(time.time())
-        um_dia = 86400  # 24 horas em segundos
+        um_dia = 86400
 
         if agora - ultimo_daily < um_dia:
             restante = um_dia - (agora - ultimo_daily)
             horas = restante // 3600
             minutos = (restante % 3600) // 60
             segundos = restante % 60
-            return await ctx.send(f"⏳ Você já coletou sua recompensa diária hoje!\nTente novamente em {horas}h {minutos}m {segundos}s.")
+            return await ctx.send(
+                f"⏳ Você já coletou sua recompensa diária hoje!\n"
+                f"Tente novamente em {horas}h {minutos}m {segundos}s."
+            )
 
-        # Atualiza o streak (reinicia se passou mais de 2 dias sem coletar)
+        # Reinicia o combo se passaram mais de 2 dias sem coletar
         if agora - ultimo_daily > um_dia * 2:
-            streak = 0
+            combo = 1
+        else:
+            combo += 1
+            if combo > 7:
+                combo = 1
 
-        streak += 1
-        if streak > 7:
-            streak = 1
-
-        # Cálculo da recompensa
-        recompensa = 2500 * (2 ** (streak - 1))
+        recompensa = 2500 * (2 ** (combo - 1))
         novo_saldo = dados["wallet"] + recompensa
 
-        # Atualiza o usuário
+        # Atualiza os dados
         atualizar_dado_usuario(user_id, "wallet", novo_saldo)
         atualizar_dado_usuario(user_id, "ultimo_daily", agora)
-        atualizar_dado_usuario(user_id, "streak", streak)
+        atualizar_dado_usuario(user_id, "combo_daily", combo)
 
         await ctx.send(
-            f"🎁 Você coletou sua recompensa diária de **LC$ {recompensa:,}**!\n"
-            f"📅 Dias consecutivos: {streak}/7"
+            f"🎁 Você coletou **LC$ {recompensa:,}** de recompensa diária!\n"
+            f"🔥 Combo diário: {combo}/7"
         )
 
 async def setup(bot):
