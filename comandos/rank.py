@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from database import cursor, criar_usuario, obter_dados_usuario
+from estruturadb import cursor, criar_usuario, obter_dados_usuario
 import sqlite3
 
 class Rank(commands.Cog):
