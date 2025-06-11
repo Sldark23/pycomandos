@@ -71,5 +71,5 @@ class Help(commands.Cog):
                 break
 
 async def setup(bot):
-    comandos = "trabalhar, jobs, ping, help, userinfo, avatar, serverinfo, sorteio, futuro, conselho, botinfo, daily, sacar, depositar, rank, coinflip, 8ball, piada, "
+    comandos = "trabalhar, jobs, ping, help, userinfo, avatar, serverinfo, sorteio, futuro, conselho, botinfo, daily, sacar, depositar, rank, coinflip, 8ball, piada, pay"
     await bot.add_cog(Help(bot, comandos))
