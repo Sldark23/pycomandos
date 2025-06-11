@@ -66,7 +66,7 @@ class Trabalhar(commands.Cog):
         try:
             with open("database.json", "r") as f:
                 db = json.load(f)
-            prefix = db.get(str(ctx.guild.id), {}).get("prefix", "!")
+            prefix = db.get(str(ctx.guild.id), {}).get("prefix", "li!")
         except:
             prefix = "li!"
         return prefix
