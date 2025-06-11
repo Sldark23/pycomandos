@@ -26,7 +26,6 @@ class Extrato(commands.Cog):
             await ctx.send("📄 Você ainda não tem transações registradas.")
             return
 
-        # Paginação
         itens_por_pagina = 5
         total_paginas = (len(transacoes) + itens_por_pagina - 1) // itens_por_pagina
         pagina_atual = 0
@@ -50,7 +49,6 @@ class Extrato(commands.Cog):
 
         mensagem = await ctx.send(embed=gerar_embed(pagina_atual))
 
-        # Adiciona as reações de navegação
         botoes = ["⏮", "⏪", "⏩", "⏭"]
         for botao in botoes:
             await mensagem.add_reaction(botao)
@@ -64,12 +62,10 @@ class Extrato(commands.Cog):
 
                 if reaction.emoji == "⏮":
                     pagina_atual = 0
-                elif reaction.emoji == "⏪":
-                    if pagina_atual > 0:
-                        pagina_atual -= 1
-                elif reaction.emoji == "⏩":
-                    if pagina_atual < total_paginas - 1:
-                        pagina_atual += 1
+                elif reaction.emoji == "⏪" and pagina_atual > 0:
+                    pagina_atual -= 1
+                elif reaction.emoji == "⏩" and pagina_atual < total_paginas - 1:
+                    pagina_atual += 1
                 elif reaction.emoji == "⏭":
                     pagina_atual = total_paginas - 1
 
@@ -77,8 +73,8 @@ class Extrato(commands.Cog):
                 await mensagem.remove_reaction(reaction.emoji, user)
 
             except asyncio.TimeoutError:
-                break  # Encerra se o usuário não reagir por 60 segundos
+                break
 
-# Adiciona o cog ao bot
-def setup(bot):
-    bot.add_cog(Extrato(bot))
+# Setup async para discord.py 2.x
+async def setup(bot):
+    await bot.add_cog(Extrato(bot))
