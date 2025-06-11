@@ -30,5 +30,5 @@ class Help(commands.Cog):
 
 async def setup(bot):
     # Exemplo de comandos passados como string com vírgulas
-    comandos = "trabalhar, jobs, ping, help, userinfo, avatar, serverinfo, sorteio, futuro, conselho, botinfo, daily,sacar,"
+    comandos = "trabalhar, jobs, ping, help, userinfo, avatar, serverinfo, sorteio, futuro, conselho, botinfo, daily,sacar,depositar"
     await bot.add_cog(Help(bot, comandos))
