@@ -2,38 +2,34 @@ import discord
 from discord.ext import commands
 
 class Help(commands.Cog):
-    def __init__(self, bot, categorias_comandos):
+    def __init__(self, bot, comandos_str):
         self.bot = bot
-        # categorias_comandos deve ser um dict {categoria: comandos_string}
-        # Exemplo: {"Diversão": "piada, 8ball", "Economia": "trabalhar, sacar"}
-        self.categorias = {}
-        for categoria, cmds_str in categorias_comandos.items():
-            # Transforma string separada por vírgulas em lista, tirando espaços extras
-            self.categorias[categoria] = [cmd.strip() for cmd in cmds_str.split(",") if cmd.strip()]
+        # transforma string em lista
+        self.comandos = [cmd.strip() for cmd in comandos_str.split(",") if cmd.strip()]
+        self.comandos_por_pagina = 8
 
     @commands.command(name="help")
-    async def help_command(self, ctx):
-        if not self.categorias:
-            return await ctx.send("❌ Nenhum comando disponível no momento.")
+    async def help_command(self, ctx, pagina: int = 1):
+        if pagina < 1:
+            return await ctx.send("❌ A página precisa ser 1 ou maior.")
+
+        total_paginas = (len(self.comandos) + self.comandos_por_pagina - 1) // self.comandos_por_pagina
+        if pagina > total_paginas:
+            return await ctx.send(f"❌ Essa página não existe. O máximo é {total_paginas}.")
+
+        inicio = (pagina - 1) * self.comandos_por_pagina
+        fim = inicio + self.comandos_por_pagina
+        cmds_pagina = self.comandos[inicio:fim]
+
+        comandos_formatados = "\n".join(f"• `{cmd}`" for cmd in cmds_pagina)
 
         embed = discord.Embed(
-            title="📜 Lista de Comandos",
+            title=f"📜 Lista de Comandos - Página {pagina}/{total_paginas}",
+            description=comandos_formatados,
             color=discord.Color.blue()
         )
-
-        for categoria, cmds in self.categorias.items():
-            # Formata a lista em string com um comando por linha e um emoji antes
-            comandos_formatados = "\n".join(f"• `{cmd}`" for cmd in cmds)
-            embed.add_field(name=f"📂 {categoria}", value=comandos_formatados, inline=False)
-
         await ctx.send(embed=embed)
 
 async def setup(bot):
-    # Exemplo de categorias com comandos (strings separados por vírgula)
-    categorias = {
-        "Diversão": "piada, 8ball, coinflip",
-        "Economia": "trabalhar, jobs, sacar, depositar, daily, rank",
-        "Informações": "userinfo, avatar, serverinfo, botinfo",
-        "Utilitários": "help, ping, sorteio, conselho, futuro"
-    }
-    await bot.add_cog(Help(bot, categorias))
+    comandos = "trabalhar, jobs, ping, help, userinfo, avatar, serverinfo, sorteio, futuro, conselho, botinfo, daily, sacar, depositar, rank, coinflip, 8ball, piada"
+    await bot.add_cog(Help(bot, comandos))
