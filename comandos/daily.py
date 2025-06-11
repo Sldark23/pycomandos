@@ -13,6 +13,8 @@ class Daily(commands.Cog):
         criar_usuario(user_id)
         dados = obter_dados_usuario(user_id)
 
+registrar_transacao(user_id=ctx.author.id, tipo="entrada", valor=valor_recebido, descricao="Recompensa diária")
+
         ultimo_daily = dados.get("ultimo_daily", 0)
         combo = dados.get("combo_daily", 1)
         agora = int(time.time())
