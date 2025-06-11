@@ -31,7 +31,7 @@ class BotInfo(commands.Cog):
         embed = discord.Embed(title="🤖 Informações do Bot", color=discord.Color.blue())
         embed.add_field(name="Nome", value=f"{self.bot.user.name}#{self.bot.user.discriminator}", inline=True)
         embed.add_field(name="ID do Bot", value=str(self.bot.user.id), inline=True)
-        embed.add_field(name="Dono", value=owner_name, inline=True)
+        embed.add_field(name="Dono", value=f"slbimp", inline=True)
         embed.add_field(name="Uptime", value=uptime, inline=True)
         embed.add_field(name="Servidores", value=f"{len(self.bot.guilds)}", inline=True)
         embed.add_field(name="Usuários totais", value=f"{len(set(self.bot.get_all_members()))}", inline=True)
