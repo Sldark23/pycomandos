@@ -2,33 +2,38 @@ import discord
 from discord.ext import commands
 
 class Help(commands.Cog):
-    def __init__(self, bot, comandos_str):
+    def __init__(self, bot, categorias_comandos):
         self.bot = bot
-        # Pode receber string ou lista
-        if isinstance(comandos_str, str):
+        # categorias_comandos deve ser um dict {categoria: comandos_string}
+        # Exemplo: {"Diversão": "piada, 8ball", "Economia": "trabalhar, sacar"}
+        self.categorias = {}
+        for categoria, cmds_str in categorias_comandos.items():
             # Transforma string separada por vírgulas em lista, tirando espaços extras
-            self.comandos = [cmd.strip() for cmd in comandos_str.split(",") if cmd.strip()]
-        elif isinstance(comandos_str, list):
-            self.comandos = comandos_str
-        else:
-            self.comandos = []
+            self.categorias[categoria] = [cmd.strip() for cmd in cmds_str.split(",") if cmd.strip()]
 
     @commands.command(name="help")
     async def help_command(self, ctx):
-        if not self.comandos:
+        if not self.categorias:
             return await ctx.send("❌ Nenhum comando disponível no momento.")
-
-        # Formata a lista em string com um comando por linha e um emoji antes
-        comandos_formatados = "\n".join(f"• `{cmd}`" for cmd in self.comandos)
 
         embed = discord.Embed(
             title="📜 Lista de Comandos",
-            description=comandos_formatados,
             color=discord.Color.blue()
         )
+
+        for categoria, cmds in self.categorias.items():
+            # Formata a lista em string com um comando por linha e um emoji antes
+            comandos_formatados = "\n".join(f"• `{cmd}`" for cmd in cmds)
+            embed.add_field(name=f"📂 {categoria}", value=comandos_formatados, inline=False)
+
         await ctx.send(embed=embed)
 
 async def setup(bot):
-    # Exemplo de comandos passados como string com vírgulas
-    comandos = "trabalhar, jobs, ping, help, userinfo, avatar, serverinfo, sorteio, futuro, conselho, botinfo, daily, sacar, depositar, rank, coinflip,8ball, piada"
-    await bot.add_cog(Help(bot, comandos))
+    # Exemplo de categorias com comandos (strings separados por vírgula)
+    categorias = {
+        "Diversão": "piada, 8ball, coinflip",
+        "Economia": "trabalhar, jobs, sacar, depositar, daily, rank",
+        "Informações": "userinfo, avatar, serverinfo, botinfo",
+        "Utilitários": "help, ping, sorteio, conselho, futuro"
+    }
+    await bot.add_cog(Help(bot, categorias))
