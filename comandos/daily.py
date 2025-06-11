@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import time
-from estruturadb import criar_usuario, obter_dados_usuario, atualizar_dado_usuario, 
+from estruturadb import criar_usuario, obter_dados_usuario, atualizar_dado_usuario, registro
 
 class Daily(commands.Cog):
     def __init__(self, bot):
