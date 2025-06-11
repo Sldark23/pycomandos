@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from database import criar_usuario, obter_dados_usuario, atualizar_dado_usuario
+from estr import criar_usuario, obter_dados_usuario, atualizar_dado_usuario
 
 class Depositar(commands.Cog):
     def __init__(self, bot):
