@@ -25,12 +25,13 @@ class BotInfo(commands.Cog):
 
         latency = round(self.bot.latency * 1000)
 
-        owner_mention = f"<@{self.owner_id}>"
+        owner_user = self.bot.get_user(self.owner_id)
+        owner_name = f"{owner_user.name}#{owner_user.discriminator}" if owner_user else f"ID: {self.owner_id}"
 
         embed = discord.Embed(title="🤖 Informações do Bot", color=discord.Color.blue())
         embed.add_field(name="Nome", value=f"{self.bot.user.name}#{self.bot.user.discriminator}", inline=True)
         embed.add_field(name="ID do Bot", value=str(self.bot.user.id), inline=True)
-        embed.add_field(name="Dono", value=f"{owner_mention} ({self.owner_id})", inline=True)
+        embed.add_field(name="Dono", value=owner_name, inline=True)
         embed.add_field(name="Uptime", value=uptime, inline=True)
         embed.add_field(name="Servidores", value=f"{len(self.bot.guilds)}", inline=True)
         embed.add_field(name="Usuários totais", value=f"{len(set(self.bot.get_all_members()))}", inline=True)
@@ -41,7 +42,7 @@ class BotInfo(commands.Cog):
         embed.add_field(name="Sistema Operacional", value=os_info, inline=True)
         embed.add_field(name="Latência", value=f"{latency} ms", inline=True)
 
-        embed.set_footer(text=f"Requisitado por {ctx.author}")
+        embed.set_footer(text=f"Requisitado por {ctx.author.display_name}")
 
         await ctx.send(embed=embed)
 
