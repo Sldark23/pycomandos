@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import time
-from database import criar_usuario, obter_dados_usuario, atualizar_dado_usuario
+from estruturadb import criar_usuario, obter_dados_usuario, atualizar_dado_usuario
 
 class Daily(commands.Cog):
     def __init__(self, bot):
@@ -11,41 +11,43 @@ class Daily(commands.Cog):
     async def daily(self, ctx):
         user_id = str(ctx.author.id)
         criar_usuario(user_id)
-        user_data = obter_dados_usuario(user_id)
+        dados = obter_dados_usuario(user_id)
 
-        tempo_atual = int(time.time())
-        tempo_ultimo = user_data.get("ultimo_daily", 0)
-        combo = user_data.get("combo_daily", 1)
-        tempo_espera = 86400  # 24 horas
+        # Recupera o timestamp e o streak atual (dias consecutivos)
+        ultimo_daily = dados.get("ultimo_daily", 0)
+        streak = dados.get("streak", 0)
 
-        if tempo_atual - tempo_ultimo < tempo_espera:
-            restante = tempo_espera - (tempo_atual - tempo_ultimo)
+        agora = int(time.time())
+        um_dia = 86400  # 24 horas em segundos
+
+        if agora - ultimo_daily < um_dia:
+            restante = um_dia - (agora - ultimo_daily)
             horas = restante // 3600
             minutos = (restante % 3600) // 60
             segundos = restante % 60
-            return await ctx.send(
-                f"⏳ Você já coletou seu daily!\n"
-                f"Tente novamente em **{horas}h {minutos}m {segundos}s**."
-            )
+            return await ctx.send(f"⏳ Você já coletou sua recompensa diária hoje!\nTente novamente em {horas}h {minutos}m {segundos}s.")
 
-        # Cálculo da recompensa: 2500 * 2^(combo-1)
-        recompensa_base = 2500
-        recompensa = recompensa_base * (2 ** (combo - 1))
+        # Atualiza o streak (reinicia se passou mais de 2 dias sem coletar)
+        if agora - ultimo_daily > um_dia * 2:
+            streak = 0
 
-        # Adicionar ao saldo
-        novo_saldo = user_data["wallet"] + recompensa
+        streak += 1
+        if streak > 7:
+            streak = 1
+
+        # Cálculo da recompensa
+        recompensa = 2500 * (2 ** (streak - 1))
+        novo_saldo = dados["wallet"] + recompensa
+
+        # Atualiza o usuário
         atualizar_dado_usuario(user_id, "wallet", novo_saldo)
-        atualizar_dado_usuario(user_id, "ultimo_daily", tempo_atual)
-
-        # Atualiza combo
-        proximo_combo = combo + 1 if combo < 7 else 1
-        atualizar_dado_usuario(user_id, "combo_daily", proximo_combo)
+        atualizar_dado_usuario(user_id, "ultimo_daily", agora)
+        atualizar_dado_usuario(user_id, "streak", streak)
 
         await ctx.send(
-            f"🎁 **Daily de Dia {combo}** coletado!\n"
-            f"💵 Você recebeu **LC$ {recompensa:,}**.\n"
-            f"🔁 Combo atualizado para o dia {proximo_combo}!"
+            f"🎁 Você coletou sua recompensa diária de **LC$ {recompensa:,}**!\n"
+            f"📅 Dias consecutivos: {streak}/7"
         )
 
-def setup(bot):
-    bot.add_cog(Daily(bot))
+async def setup(bot):
+    await bot.add_cog(Daily(bot))
