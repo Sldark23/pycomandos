@@ -26,7 +26,7 @@ class BotInfo(commands.Cog):
         latency = round(self.bot.latency * 1000)
 
         owner_user = self.bot.get_user(self.owner_id)
-        owner_name = f"{owner_user.name}#{owner_user.discriminator}" if owner_user else f"ID: {self.owner_id}"
+        owner_name = f"slbimp"
 
         embed = discord.Embed(title="🤖 Informações do Bot", color=discord.Color.blue())
         embed.add_field(name="Nome", value=f"{self.bot.user.name}#{self.bot.user.discriminator}", inline=True)
