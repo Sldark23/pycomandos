@@ -7,9 +7,17 @@ class Depositar(commands.Cog):
         self.bot = bot
 
     @commands.command(name="depositar")
-    async def depositar(self, ctx, valor: int):
+    async def depositar(self, ctx, valor):
         criar_usuario(ctx.author.id)
         user_data = obter_dados_usuario(ctx.author.id)
+
+        if valor.lower() in ["tudo", "all", "max"]:
+            valor = user_data["wallet"]
+        else:
+            try:
+                valor = int(valor)
+            except ValueError:
+                return await ctx.send("❌ Valor inválido.")
 
         if valor <= 0:
             return await ctx.send("❌ O valor precisa ser maior que zero.")
