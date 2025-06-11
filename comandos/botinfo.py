@@ -8,7 +8,7 @@ class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.start_time = time.time()
-        self.owner_id = 123456789012  # Seu ID fixo
+        self.owner_id = 1242430100184502303  # Seu ID fixo
 
     @commands.command(name="botinfo")
     async def botinfo(self, ctx):
