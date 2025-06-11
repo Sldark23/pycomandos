@@ -12,7 +12,7 @@ class Daily(commands.Cog):
         user_id = str(ctx.author.id)
         criar_usuario(user_id)
         dados = obter_dados_usuario(user_id)
-
+valor_recebido
 registrar_transacao(user_id=ctx.author.id, tipo="entrada", valor=valor_recebido, descricao="Recompensa diária")
 
         ultimo_daily = dados.get("ultimo_daily", 0)
